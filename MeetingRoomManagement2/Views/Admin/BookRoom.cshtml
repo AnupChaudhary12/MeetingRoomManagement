@@ -1,0 +1,51 @@
+﻿@model MeetingRoomManagement2.Models.DTo.BookingModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Book Room</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Book Room</h3>
+                <form asp-controller="Admin" asp-action="BookRoom" method="post">
+                    <div class="form-group">
+                        <label for="roomId">Select Room:</label>
+                        <select class="form-control" id="roomId" name="RoomModelId" required>
+                            @if (ViewBag.Rooms != null)
+                            {
+                                foreach (var room in ViewBag.Rooms)
+                                {
+                                    <option value="@room.Id">@room.RoomName</option>
+                                }
+                            }
+                            else
+                            {
+                                <option value="">Rooms not available</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startTime">Start Time:</label>
+                        <input type="datetime-local" class="form-control" id="startTime" name="startTime" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="endTime">End Time:</label>
+                        <input type="datetime-local" class="form-control" id="endTime" name="endTime" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Book</button>
+                    <a asp-action="GetRoom" class="btn btn-primary">Back to List</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

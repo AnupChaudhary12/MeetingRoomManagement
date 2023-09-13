@@ -1,0 +1,36 @@
+﻿@model IEnumerable<MeetingRoomManagement2.Models.DTo.ParticipantModel> 
+
+<h2>Participants List With Booking Id</h2>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>User Name</th>
+            <th>Booking Id</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var participant in Model)
+        {
+            <tr>
+                <td>@participant.Id</td>
+                <td>@participant.UserId</td>
+                <td>@participant.BookingId</td>
+                <td>
+                    <a asp-action="RemoveParticipant" asp-route-id="@participant.Id">Remove Participant</a>
+                </td>
+               @*  <td>
+                    <a asp-action="GetRoomDetails" asp-route-id="@room.Id">Details</a> |
+                    <a asp-action="EditRoom" asp-route-id="@room.Id">Edit</a> |
+                    <a asp-action="DeleteRoom" asp-route-id="@room.Id">Delete</a> |
+                    <a asp-action="BookRoom" asp-route-id="@room.Id">Book</a> |
+                    <a asp-action="BookingDetails" asp-route-id="@room.Id">Booking Details</a> |
+
+                </td> *@
+            </tr>
+        }
+    </tbody>
+</table>

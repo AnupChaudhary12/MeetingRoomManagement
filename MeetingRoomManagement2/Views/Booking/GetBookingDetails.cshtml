@@ -1,0 +1,33 @@
+﻿@model IEnumerable<MeetingRoomManagement2.Models.DTo.BookingModel> // Replace with your actual model namespace
+
+<h2>Room List</h2>
+
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Start Time</th>
+			<th>End Time</th>
+			<th>User Id</th>
+			<th>Room Id</th>
+
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var room in Model)
+		{
+			<tr>
+				<td>@room.ID</td>
+				<td>@room.StartTime</td>
+				<td>@room.EndTime</td>
+				<td>@room.UserID</td>
+				<td>@room.RoomModelId</td>
+				<td>
+					<a asp-action="EditBooking" asp-route-id="@room.ID">Edit Booking</a> |
+				</td>
+
+			</tr>
+		}
+	</tbody>
+</table>

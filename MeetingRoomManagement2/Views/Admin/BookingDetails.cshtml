@@ -1,0 +1,20 @@
+﻿@model MeetingRoomManagement2.Models.DTo.BookingModel // Replace with your actual model namespace
+
+
+<h2>Booking Details</h2>
+
+<div>
+    <h4>Name: @Model.ID</h4>
+    <h4>Start Time: @Model.StartTime</h4>
+        <h4>End Time: @Model.EndTime</h4>
+
+    <h4>User: @Model.UserID</h4>
+
+    <h4>Room ID: @Model.RoomModelId</h4>
+
+</div>
+
+
+<p>
+    <a asp-action="GetRoom" class="btn btn-primary">Back to List</a>
+</p>
