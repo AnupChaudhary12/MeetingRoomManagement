@@ -187,7 +187,7 @@ namespace MeetingRoomManagement.Controllers
             {
                 return NotFound();
             }
-            var booking = await _databaseContext.Bookings.FirstOrDefaultAsync(m => m.RoomModelId == id);
+            var booking = await _databaseContext.Bookings.Where(m => m.RoomModelId == id).ToListAsync();
             if (booking == null)
             {
                 return NotFound();

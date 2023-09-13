@@ -1,20 +1,39 @@
-﻿@model MeetingRoomManagement2.Models.DTo.BookingModel // Replace with your actual model namespace
-
+﻿@model List<MeetingRoomManagement2.Models.DTo.BookingModel>
 
 <h2>Booking Details</h2>
 
-<div>
-    <h4>Name: @Model.ID</h4>
-    <h4>Start Time: @Model.StartTime</h4>
-        <h4>End Time: @Model.EndTime</h4>
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User Id</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Room Id</th>
 
-    <h4>User: @Model.UserID</h4>
-
-    <h4>Room ID: @Model.RoomModelId</h4>
-
-</div>
-
-
+            
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model)
+            {
+                <tr>
+                    <td>@booking.ID</td>
+                    <td>@booking.UserID</td>
+                    <td>@booking.StartTime</td>
+                    <td>@booking.EndTime</td>
+                    <td>@booking.RoomModelId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No bookings found for this room.</p>
+}
 <p>
-    <a asp-action="GetRoom" class="btn btn-primary">Back to List</a>
+    <a asp-action="GetRoom" class="btn btn-primary" >Back to Room List</a>
 </p>
