@@ -158,7 +158,7 @@ namespace MeetingRoomManagement.Controllers
             }
             if (room.Status == " NotAvailable")
             {
-                return NotFound("Room is unavailable for booking");
+                return NotFound("Room is unavailable for booking because Room Capacity is Full");
             }
             if (room.Bookings.Any(b => b.StartTime <= startTime && b.EndTime >= startTime) || room.Bookings.Any(b => b.StartTime <= endTime && b.EndTime >= endTime) || room.Bookings.Any(b => b.StartTime >= startTime && b.EndTime <= endTime))
             {
