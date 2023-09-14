@@ -2,6 +2,7 @@
 using MeetingRoomManagement2.Models.Domain;
 using MeetingRoomManagement2.Models.DTo;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,11 +12,12 @@ namespace MeetingRoomManagement.Controllers
 	[Authorize]
 	public class BookingController : Controller
 	{
-		
+		private readonly UserManager<ApplicationUser> _userManager;
 		private readonly DatabaseContext _databaseContext;
-		public BookingController( DatabaseContext databaseContext)
+		public BookingController( DatabaseContext databaseContext, UserManager<ApplicationUser> userManager)
 		{
 			_databaseContext = databaseContext;
+			_userManager = userManager;
 			
 		}
 		public IActionResult Display()
@@ -95,7 +97,7 @@ namespace MeetingRoomManagement.Controllers
 			{
 				return NotFound();
 			}
-			var booking = await _databaseContext.Bookings.FirstOrDefaultAsync(m => m.RoomModelId == id);
+			var booking = await _databaseContext.Bookings.Where(m => m.RoomModelId == id).ToListAsync();
 			if (booking == null)
 			{
 				return NotFound();
@@ -109,10 +111,93 @@ namespace MeetingRoomManagement.Controllers
 			return View(booking);
 		}
 
+        [HttpGet]
+        public async Task<IActionResult> EditBooking(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var booking = await _databaseContext.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (booking.UserID != currentUser.UserName)
+            {
+                return RedirectToAction(nameof(Unauthorized));
+            }
+
+            return View(booking);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditBooking(int id, BookingModel booking)
+        {
+            if (id != booking.ID)
+            {
+                return NotFound();
+            }
+
+            var existingBooking = await _databaseContext.Bookings.FindAsync(id);
+
+            if (existingBooking == null)
+            {
+                return NotFound();
+            }
+
+            //var currentUser = await _userManager.GetUserAsync(User);
+            //if (existingBooking.UserID != currentUser.UserName)
+            //{
+            //    return RedirectToAction(nameof(Unauthorized));
+            //}
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    existingBooking.StartTime = booking.StartTime;
+                    existingBooking.EndTime = booking.EndTime;
 
 
+                    _databaseContext.Update(existingBooking);
+                    await _databaseContext.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BookingModelExists(booking.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(GetBookingDetails));
+            }
+
+            return View(booking);
+        }
 
 
-
-	}
+        public IActionResult Unauthorized()
+        {
+            return View();
+        }
+        private bool BookingModelExists(int id)
+        {
+            return _databaseContext.Bookings.Any(e => e.ID == id);
+        }
+    }
 }
+
+
+
+
+
+	
