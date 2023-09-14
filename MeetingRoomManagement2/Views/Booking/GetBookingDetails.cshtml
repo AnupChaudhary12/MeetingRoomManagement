@@ -25,6 +25,8 @@
 				<td>@room.RoomModelId</td>
 				<td>
 					<a asp-action="EditBooking" asp-route-id="@room.ID">Edit Booking</a> |
+					<a asp-action="DeleteBooking" asp-route-id="@room.ID">Remove Booking</a> |
+					<a asp-action="AddParticipant" asp-route-BookingId="@room.ID">Add Participant</a> |
 				</td>
 
 			</tr>
