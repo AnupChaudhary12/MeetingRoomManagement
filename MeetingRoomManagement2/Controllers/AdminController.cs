@@ -148,7 +148,13 @@ namespace MeetingRoomManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> BookRoom(int RoomModelId, DateTime startTime, DateTime endTime)
         {
-            var room = await _databaseContext.Rooms.FirstOrDefaultAsync(m => m.Id == RoomModelId);
+            var room = await _databaseContext.Rooms.
+                            Include(r => r.Bookings)
+                            .FirstOrDefaultAsync(m => m.Id == RoomModelId);
+            if (room.Bookings.Any(b => b.StartTime <= startTime && b.EndTime >= startTime) || room.Bookings.Any(b => b.StartTime <= endTime && b.EndTime >= endTime) || room.Bookings.Any(b => b.StartTime >= startTime && b.EndTime <= endTime))
+            {
+                return NotFound("Room is already booked");
+            }
             if (room == null)
             {
                 return NotFound("Room not found");
