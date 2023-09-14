@@ -230,6 +230,18 @@ namespace MeetingRoomManagement.Controllers
             var booking = _databaseContext.Bookings
                 .Include(b => b.RoomModel)
                 .FirstOrDefault(b => b.ID == bookingId);
+            var room= booking?.RoomModel;
+            if (room == null)
+            {
+                return NotFound();
+            }
+            var currentParticipantsCount = _databaseContext.Participants
+                 .Where(p => p.BookingId == bookingId)
+                 .Count();
+            if (currentParticipantsCount >= room.Capacity)
+            {
+                return NotFound("Room is full");
+            }
 
             var currentUser = _userManager.GetUserAsync(User).Result;
 
@@ -355,7 +367,7 @@ namespace MeetingRoomManagement.Controllers
 
             if (participants == null || participants.Count == 0)
             {
-                return NotFound();
+                return NotFound("There is no participant in this Booked Room");
             }
 
             return View(participants);
