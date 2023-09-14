@@ -4,33 +4,44 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Meeting Room Management</title>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+@* 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+ *@
+ <link rel="stylesheet" href="~/css/MyCssTheme.css"/>
 
 </head>
 <body>
-	<nav class="navbar navbar-default">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="#">Meeting Room Management</a>
-			</div>
-			<ul class="nav navbar-nav">
-				@* <li class="active"><a href="#">Home</a></li> *@
-				<li><a href="/Dashboard/Display">Dashboard</a></li>
-				@if (User.IsInRole("admin"))
-				{
-					<li><a href="/Admin/Display">Admin Page</a></li>
-				}
-				@if (User.IsInRole("user"))
-				{
-					<li><a href="/Booking/Display">Booking</a></li>
-				}
 
-				<li><a href="/UserAuthentication/Logout">Logout</a></li>
-
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" href="#">Meeting Room Management</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav">
+				@* <li class="nav-item active">
+					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+				</li> *@
+				<li class="nav-item">
+					<a class="nav-link" href="/Dashboard/Display">Dashboard</a>
+				</li>
+				@if (User.IsInRole("admin")){
+					<li class="nav-item">
+						<a class="nav-link" href="/Admin/Display">Admin Page</a>
+					</li>
+				}
+				@if (User.IsInRole("user")){
+					<li class="nav-item">
+						<a class="nav-link" href="/Booking/Display">Booking</a>
+					</li>
+				}
+				
+				<li class="nav-item">
+					<a class="nav-link" href="/UserAuthentication/Logout">Logout</a>
+				</li>
 			</ul>
-
 		</div>
 	</nav>
+	
 
 	<div class="container">
 
@@ -38,7 +49,7 @@
 
 	</div>
 
-
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
 </body>
 </html>
