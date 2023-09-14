@@ -276,6 +276,65 @@ namespace MeetingRoomManagement.Controllers
             return View(participants);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> RemoveParticipant(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var participant = await _databaseContext.Participants.FindAsync(id);
+            if (participant == null)
+            {
+                return NotFound();
+            }
+
+            var booking = await _databaseContext.Bookings
+                .Include(b => b.RoomModel)
+                .FirstOrDefaultAsync(b => b.ID == participant.BookingId);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (booking.UserID != currentUser.UserName)
+            {
+                return RedirectToAction(nameof(Unauthorized));
+            }
+
+            return View(participant);
+        }
+
+        [HttpPost, ActionName("RemoveParticipant")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveParticipantConfirmed(int id)
+        {
+            var participant = await _databaseContext.Participants.FindAsync(id);
+
+            if (participant == null)
+            {
+                return NotFound();
+            }
+
+            var booking = await _databaseContext.Bookings
+                .FirstOrDefaultAsync(b => b.ID == participant.BookingId);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+   
+
+            _databaseContext.Participants.Remove(participant);
+            await _databaseContext.SaveChangesAsync();
+
+            return RedirectToAction(nameof(GetParticipants));
+        }
+
         public IActionResult Unauthorized()
         {
             return View();
