@@ -111,6 +111,40 @@ namespace MeetingRoomManagement.Controllers
 			return View(booking);
 		}
 
+		public async Task<IActionResult> DeleteBooking(int? id)
+		{
+			if (id == null)
+			{
+                return NotFound();
+            }
+			var booking = await _databaseContext.Bookings.FirstOrDefaultAsync(m => m.ID == id);
+			if (booking == null)
+			{
+                return NotFound();
+            }
+			var currentUser = await _userManager.GetUserAsync(User);
+			if (booking.UserID != currentUser.UserName)
+			{
+                return RedirectToAction(nameof(Unauthorized));
+            }
+			return View(booking);
+		}
+		[HttpPost, ActionName("DeleteBooking")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(int id)
+		{
+			var booking = await _databaseContext.Bookings.FindAsync(id);
+			if (booking == null)
+			{
+                return NotFound();
+            }
+			_databaseContext.Bookings.Remove(booking);
+			await _databaseContext.SaveChangesAsync();
+			return RedirectToAction(nameof(GetBookingDetails));
+
+		}
+
+
         [HttpGet]
         public async Task<IActionResult> EditBooking(int? id)
         {
@@ -184,6 +218,57 @@ namespace MeetingRoomManagement.Controllers
             return View(booking);
         }
 
+        [HttpGet]
+        public IActionResult AddParticipant(int bookingId)
+        {
+            var booking = _databaseContext.Bookings
+                .Include(b => b.RoomModel)
+                .FirstOrDefault(b => b.ID == bookingId);
+
+            var currentUser = _userManager.GetUserAsync(User).Result;
+
+            if (booking == null || currentUser.UserName != booking.UserID)
+            {
+                return RedirectToAction(nameof(Unauthorized));
+            }
+
+            var availableParticipants = _userManager.Users.ToList();
+
+            if (availableParticipants == null)
+            {
+                availableParticipants = new List<ApplicationUser>();
+            }
+
+            var viewModel = new AddParticipantViewModel
+            {
+                Booking = booking,
+                AvailableParticipants = availableParticipants
+            };
+
+            ViewBag.AvailableParticipants = availableParticipants;
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddParticipant(AddParticipantViewModel viewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var participant = new ParticipantModel
+                {
+                    UserId = viewModel.UserId,
+                    BookingId = viewModel.Booking.ID
+                };
+
+                _databaseContext.Participants.Add(participant);
+                await _databaseContext.SaveChangesAsync();
+
+                return RedirectToAction("GetBookingDetails", new { id = viewModel.Booking.ID });
+            }
+
+            return View(viewModel);
+        }
 
         public IActionResult Unauthorized()
         {
