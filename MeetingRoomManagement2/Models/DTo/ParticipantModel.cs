@@ -14,5 +14,6 @@ namespace MeetingRoomManagement2.Models.DTo
         [ForeignKey("ApplicationUser")]
 
         public string? UserId { get; set; }
+        
     }
 }

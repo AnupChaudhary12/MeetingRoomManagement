@@ -283,7 +283,23 @@ namespace MeetingRoomManagement.Controllers
                 .Include(b => b.RoomModel)
                 .FirstOrDefault(b => b.ID == bookingId);
 
-            var availableParticipants = _userManager.Users.Where(u=>u !=null).ToList();
+            var room = booking?.RoomModel;
+
+            if (room == null)
+            {
+                return NotFound();
+            }
+
+            var currentParticipantsCount = _databaseContext.Participants
+                .Where(p => p.BookingId == bookingId)
+                .Count();
+
+            if (currentParticipantsCount >= room.Capacity)
+            {
+                return NotFound("Room is full");
+            }
+
+            var availableParticipants = _userManager.Users.Where(u => u != null).ToList();
 
             if (availableParticipants == null)
             {
@@ -293,9 +309,9 @@ namespace MeetingRoomManagement.Controllers
             var viewModel = new AddParticipantViewModel
             {
                 Booking = booking,
-                
                 AvailableParticipants = availableParticipants
             };
+
             ViewBag.AvailableParticipants = availableParticipants;
 
             return View(viewModel);
@@ -304,6 +320,7 @@ namespace MeetingRoomManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> AddParticipant(AddParticipantViewModel viewModel)
         {
+            
             if (ModelState.IsValid)
             {
                 var participant = new ParticipantModel
@@ -311,8 +328,8 @@ namespace MeetingRoomManagement.Controllers
                     UserId = viewModel.UserId,
                     BookingId = viewModel.Booking.ID
                 };
-
-                _databaseContext.Participants.Add(participant);
+           
+           _databaseContext.Participants.Add(participant);
                 await _databaseContext.SaveChangesAsync();
 
                 return RedirectToAction("GetParticipants", new { id = viewModel.Booking.ID });
@@ -320,6 +337,7 @@ namespace MeetingRoomManagement.Controllers
 
             return View(viewModel);
         }
+
 		[HttpGet]
 		public async Task<IActionResult> ListParticipantWithBookID(int? bookingId)
 		{
@@ -334,7 +352,7 @@ namespace MeetingRoomManagement.Controllers
 
 			if (participants == null || participants.Count == 0)
 			{
-				return NotFound();
+				return NotFound("There is no participant in this Booked Room");
 			}
 
 			return View(participants);

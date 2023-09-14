@@ -9,6 +9,7 @@ namespace MeetingRoomManagement2.Models.DTo
         public string UserID { get; set; } = string.Empty; // this is the ID of the user who booked the room
         public int RoomModelId { get; set; } // this is the ID of the room that was booked
         public RoomModel? RoomModel { get; set; }
+        
 
        
     
