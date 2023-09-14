@@ -314,8 +314,27 @@ namespace MeetingRoomManagement.Controllers
 
             return View(viewModel);
         }
+		[HttpGet]
+		public async Task<IActionResult> ListParticipantWithBookID(int? bookingId)
+		{
+			if (bookingId == null)
+			{
+				return NotFound();
+			}
 
-        public async Task<IActionResult> GetParticipants()
+			var participants = await _databaseContext.Participants
+				.Where(p => p.BookingId == bookingId)
+				.ToListAsync();
+
+			if (participants == null || participants.Count == 0)
+			{
+				return NotFound();
+			}
+
+			return View(participants);
+		}
+
+		public async Task<IActionResult> GetParticipants()
         {
             var participants = await _databaseContext.Participants.ToListAsync();
             return View(participants);

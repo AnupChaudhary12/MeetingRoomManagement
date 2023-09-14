@@ -335,6 +335,26 @@ namespace MeetingRoomManagement.Controllers
             return RedirectToAction(nameof(GetParticipants));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ListParticipantWithBookID(int? bookingId)
+        {
+            if (bookingId == null)
+            {
+                return NotFound();
+            }
+
+            var participants = await _databaseContext.Participants
+                .Where(p => p.BookingId == bookingId)
+                .ToListAsync();
+
+            if (participants == null || participants.Count == 0)
+            {
+                return NotFound();
+            }
+
+            return View(participants);
+        }
+
         public IActionResult Unauthorized()
         {
             return View();
