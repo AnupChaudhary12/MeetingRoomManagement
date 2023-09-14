@@ -270,6 +270,12 @@ namespace MeetingRoomManagement.Controllers
             return View(viewModel);
         }
 
+        public async Task<IActionResult> GetParticipants()
+        {
+            var participants = await _databaseContext.Participants.ToListAsync();
+            return View(participants);
+        }
+
         public IActionResult Unauthorized()
         {
             return View();
